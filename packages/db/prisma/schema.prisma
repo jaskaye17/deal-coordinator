@@ -1,0 +1,729 @@
+// Deal Coordinator — database schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Workspace {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships        WorkspaceMembership[]
+  deals              Deal[]
+  settings           WorkspaceSettings?
+  memoryEntries      MemoryEntry[]
+  auditEvents        AuditEvent[]
+  dealParties        DealParty[]
+  dealFields         DealField[]
+  unresolvedItems    UnresolvedItem[]
+  communications     Communication[]
+  exceptions         Exception[]
+  calendarEvents     CalendarEvent[]
+  documents          Document[]
+  documentVersions   DocumentVersion[]
+  reviewTasks        ReviewTask[]
+  offers             Offer[]
+  tasks              Task[]
+  signatureEnvelopes      SignatureEnvelope[]
+  offerFiles              OfferFile[]
+  offerComparisonSnapshots OfferComparisonSnapshot[]
+  integrationConfigs      IntegrationConfig[]
+  folders                 Folder[]
+  fileAssets              FileAsset[]
+  templates               Template[]
+  responsibleBrokers      ResponsibleBroker[]
+}
+
+model ResponsibleBroker {
+  id            String   @id @default(uuid()) @db.Uuid
+  workspaceId   String   @db.Uuid
+  name          String
+  licenseNumber String?
+  address       String?
+  city          String?
+  state         String?
+  zip           String?
+  phone         String?
+  email         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  name         String
+  passwordHash String?
+  avatarUrl    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  auth0Sub        String?  @unique
+  memberships     WorkspaceMembership[]
+  dealAssignments DealAssignment[]
+  connections     UserConnection[]
+}
+
+model WorkspaceMembership {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @db.Uuid
+  userId      String   @db.Uuid
+  role        String
+  createdAt   DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([workspaceId])
+  @@index([userId])
+}
+
+model WorkspaceSettings {
+  id                        String   @id @default(uuid()) @db.Uuid
+  workspaceId               String   @unique @db.Uuid
+  confidenceThresholdHigh   Float    @default(0.85)
+  confidenceThresholdMedium Float    @default(0.50)
+  reviewGatePolicy          Json     @default("[\"send_for_signature\",\"send_email\",\"send_text\"]")
+  auditRetentionYears       Int      @default(7)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model IntegrationConfig {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @db.Uuid
+  provider    String
+  configJson  Json
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, provider])
+  @@index([workspaceId])
+}
+
+model UserConnection {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @db.Uuid
+  provider      String
+  accessToken   String?
+  refreshToken  String?
+  expiresAt     DateTime?
+  externalId    String?
+  metadata      Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
+  @@index([userId])
+}
+
+model Deal {
+  id          String    @id @default(uuid()) @db.Uuid
+  workspaceId String    @db.Uuid
+  dealType    String
+  stage       String    @default("new_intake")
+  title       String?
+  address     String?
+  description String?
+  displayName         String?
+  slug                String?
+  propertyAddress     String?
+  primaryContactName  String?
+  mlsNumber   String?
+  listPrice   Decimal?  @db.Decimal(19, 4)
+  closingDate DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  workspace          Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  parties            DealParty[]
+  fields             DealField[]
+  unresolvedItems    UnresolvedItem[]
+  communications     Communication[]
+  memoryEntries      MemoryEntry[]
+  auditEvents        AuditEvent[]
+  exceptions         Exception[]
+  calendarEvents     CalendarEvent[]
+  assignments        DealAssignment[]
+  documents          Document[]
+  offers             Offer[]
+  tasks              Task[]
+  reviewTasks        ReviewTask[]
+  signatureEnvelopes      SignatureEnvelope[]
+  offerComparisonSnapshots OfferComparisonSnapshot[]
+  folders                 Folder[]
+  fileAssets              FileAsset[]
+
+  @@unique([workspaceId, slug])
+  @@index([workspaceId])
+  @@index([stage])
+  @@index([dealType])
+  @@index([createdAt])
+}
+
+model DealAssignment {
+  id        String   @id @default(uuid()) @db.Uuid
+  dealId    String   @db.Uuid
+  userId    String   @db.Uuid
+  role      String
+  createdAt DateTime @default(now())
+
+  deal Deal @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([dealId, userId, role])
+  @@index([dealId])
+  @@index([userId])
+}
+
+model DealParty {
+  id          String   @id @default(uuid()) @db.Uuid
+  dealId      String   @db.Uuid
+  workspaceId String   @db.Uuid
+  role        String
+  name        String
+  email       String?
+  phone       String?
+  company     String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  deal      Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([dealId])
+  @@index([workspaceId])
+}
+
+model DealField {
+  id                String    @id @default(uuid()) @db.Uuid
+  dealId            String    @db.Uuid
+  workspaceId       String    @db.Uuid
+  fieldName         String
+  fieldValue        String?
+  source            String    @default("manual")
+  confidence        Float?
+  needsConfirmation Boolean   @default(false)
+  confirmedAt       DateTime?
+  confirmedBy       String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  deal      Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([dealId, fieldName])
+  @@index([dealId])
+  @@index([workspaceId])
+}
+
+model UnresolvedItem {
+  id             String    @id @default(uuid()) @db.Uuid
+  dealId         String    @db.Uuid
+  workspaceId    String    @db.Uuid
+  type           String
+  fieldName      String?
+  question       String
+  suggestedValue String?
+  status         String    @default("open")
+  resolvedAt     DateTime?
+  resolvedBy     String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  deal      Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([dealId])
+  @@index([workspaceId])
+  @@index([status])
+}
+
+model Communication {
+  id          String   @id @default(uuid()) @db.Uuid
+  dealId      String   @db.Uuid
+  workspaceId String   @db.Uuid
+  direction   String
+  type        String
+  senderName  String
+  senderId    String?
+  content     String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  deal      Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([dealId])
+  @@index([workspaceId])
+  @@index([createdAt])
+}
+
+model MemoryEntry {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @db.Uuid
+  dealId      String?  @db.Uuid
+  scope       String
+  content     String
+  category    String?
+  createdBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  deal      Deal?     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([dealId])
+  @@index([scope])
+}
+
+model AuditEvent {
+  id            String   @id @default(uuid()) @db.Uuid
+  workspaceId   String   @db.Uuid
+  dealId        String?  @db.Uuid
+  action        String
+  objectType    String
+  objectId      String
+  actorType     String
+  actorId       String
+  before        Json?
+  after         Json?
+  metadata      Json?
+  requestId     String?
+  integrityHash String?
+  createdAt     DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  deal      Deal?     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([dealId])
+  @@index([action])
+  @@index([objectType])
+  @@index([objectId])
+  @@index([createdAt])
+  @@index([requestId])
+}
+
+model Exception {
+  id                String    @id @default(uuid()) @db.Uuid
+  dealId            String    @db.Uuid
+  workspaceId       String    @db.Uuid
+  title             String
+  description       String?
+  severity          String    @default("medium")
+  status            String    @default("detected")
+  relatedObjectType String?
+  relatedObjectId   String?
+  question          String?
+  resolution        String?
+  resolvedAt        DateTime?
+  resolvedBy        String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  deal      Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([dealId])
+  @@index([workspaceId])
+  @@index([status])
+  @@index([severity])
+}
+
+model CalendarEvent {
+  id               String    @id @default(uuid()) @db.Uuid
+  dealId           String    @db.Uuid
+  workspaceId      String    @db.Uuid
+  eventType        String?
+  title            String
+  description      String?
+  startDate        DateTime
+  endDate          DateTime?
+  attendeesJson    Json?
+  status           String    @default("active")
+  sourceType       String?
+  sourceId         String?
+  externalId       String?
+  externalProvider String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  deal      Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([dealId])
+  @@index([workspaceId])
+  @@index([startDate])
+  @@index([eventType])
+}
+
+// --- Phase 2 enhanced models ---
+
+model Document {
+  id                   String   @id @default(uuid()) @db.Uuid
+  dealId               String   @db.Uuid
+  workspaceId          String   @db.Uuid
+  templateId           String?  @db.Uuid
+  documentType         String
+  name                 String
+  status               String   @default("draft")
+  currentVersionNumber Int      @default(0)
+  latestFileUrl        String?
+  requiresReview       Boolean  @default(false)
+  metadata             Json?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  deal      Deal              @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  workspace Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  template  Template? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  versions  DocumentVersion[]
+
+  @@index([dealId])
+  @@index([workspaceId])
+  @@index([status])
+  @@index([documentType])
+}
+
+model DocumentVersion {
+  id                     String   @id @default(uuid()) @db.Uuid
+  documentId             String   @db.Uuid
+  workspaceId            String   @db.Uuid
+  versionNumber          Int      @default(1)
+  fileUrl                String?
+  generatedFromFieldsJson Json?
+  changeSummary          String?
+  notes                  String?
+  createdByActorType     String   @default("user")
+  createdByActorId       String?
+  createdAt              DateTime @default(now())
+
+  document  Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([workspaceId])
+  @@index([versionNumber])
+}
+
+model ReviewTask {
+  id               String    @id @default(uuid()) @db.Uuid
+  dealId           String    @db.Uuid
+  workspaceId      String    @db.Uuid
+  actionType       String
+  objectType       String
+  objectId         String
+  status           String    @default("pending")
+  assignedToUserId String?   @db.Uuid
+  reviewedByUserId String?   @db.Uuid
+  payloadJson      Json?
+  reviewNotes      String?
+  resolvedAt       DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  deal      Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  signatureEnvelopes SignatureEnvelope[]
+
+  @@index([dealId])
+  @@index([workspaceId])
+  @@index([status])
+  @@index([actionType])
+  @@index([assignedToUserId])
+}
+
+model SignatureEnvelope {
+  id                  String    @id @default(uuid()) @db.Uuid
+  workspaceId         String    @db.Uuid
+  dealId              String    @db.Uuid
+  reviewTaskId        String?   @db.Uuid
+  provider            String    @default("fake")
+  providerEnvelopeId  String?
+  status              String    @default("draft")
+  recipientsJson      Json?
+  documentIdsJson     Json?
+  sentAt              DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  deal       Deal        @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  reviewTask ReviewTask? @relation(fields: [reviewTaskId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId])
+  @@index([dealId])
+  @@index([status])
+  @@index([reviewTaskId])
+}
+
+model Offer {
+  id                       String    @id @default(uuid()) @db.Uuid
+  dealId                   String    @db.Uuid
+  workspaceId              String    @db.Uuid
+  offerLabel               String?
+  status                   String    @default("received")
+  buyerName                String?
+  buyerEntityName          String?
+  buyerAgent               String?
+  offerPrice               Decimal?  @db.Decimal(19, 4)
+  earnestMoney             Decimal?  @db.Decimal(19, 4)
+  optionPeriodDays         Int?
+  financingType            String?
+  closeDate                DateTime?
+  proofOfFundsStatus       String?
+  preapprovalStatus        String?
+  summaryJson              Json?
+  extractedFieldsJson      Json?
+  extractionConfidenceJson Json?
+  terms                    String?
+  expiresAt                DateTime?
+  notes                    String?
+  receivedAt               DateTime  @default(now())
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  deal      Deal       @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  workspace Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  files     OfferFile[]
+
+  @@index([dealId])
+  @@index([workspaceId])
+  @@index([status])
+}
+
+model OfferFile {
+  id           String   @id @default(uuid()) @db.Uuid
+  offerId      String   @db.Uuid
+  workspaceId  String   @db.Uuid
+  fileName     String
+  fileUrl      String?
+  fileType     String?
+  versionLabel String?
+  createdAt    DateTime @default(now())
+
+  offer     Offer     @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([offerId])
+  @@index([workspaceId])
+}
+
+model OfferComparisonSnapshot {
+  id           String   @id @default(uuid()) @db.Uuid
+  workspaceId  String   @db.Uuid
+  dealId       String   @db.Uuid
+  snapshotJson Json
+  createdAt    DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  deal      Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([dealId])
+  @@index([workspaceId])
+}
+
+model Folder {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @db.Uuid
+  dealId      String?  @db.Uuid
+  parentId    String?  @db.Uuid
+  name        String
+  path        String
+  scope       String   @default("deal")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  deal      Deal?      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  parent    Folder?    @relation("FolderTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Folder[]   @relation("FolderTree")
+  files     FileAsset[]
+
+  @@unique([workspaceId, dealId, path])
+  @@index([workspaceId])
+  @@index([dealId])
+  @@index([parentId])
+}
+
+model FileAsset {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @db.Uuid
+  dealId      String?  @db.Uuid
+  folderId    String?  @db.Uuid
+  fileName    String
+  assetType   String?
+  fileKey     String
+  fileUrl     String?
+  mimeType    String?
+  fileSize    Int?
+  scope       String   @default("deal")
+  uploadedBy  String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  deal      Deal?     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  folder    Folder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId])
+  @@index([dealId])
+  @@index([folderId])
+  @@index([scope])
+}
+
+model FolderTemplate {
+  id            String   @id @default(uuid()) @db.Uuid
+  workflowKey   String   @unique
+  structureJson Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Task {
+  id          String    @id @default(uuid()) @db.Uuid
+  dealId      String    @db.Uuid
+  workspaceId String    @db.Uuid
+  title       String
+  description String?
+  status      String    @default("pending")
+  category    String?
+  sortOrder   Int       @default(0)
+  sourceType  String?
+  sourceId    String?
+  dueDate     DateTime?
+  assignedTo  String?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  deal      Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([dealId])
+  @@index([workspaceId])
+  @@index([status])
+  @@index([category])
+}
+
+// --- Global / workspace PDF template library (ingested from repo → storage → DB) ---
+
+model WorkflowDefinition {
+  key         String   @id
+  label       String
+  description String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  templateLinks TemplateWorkflow[]
+}
+
+model Template {
+  id                  String   @id @default(uuid()) @db.Uuid
+  workspaceId         String?  @db.Uuid
+  name                String
+  slug                String   @unique
+  description         String?
+  isSystemTemplate    Boolean  @default(false)
+  parentTemplateId    String?  @db.Uuid
+  status              String   @default("active")
+  documentType        String
+  tags                Json     @default("[]")
+  jurisdiction        String?
+  notes               String?
+  isRequiredByDefault Boolean  @default(false)
+  fieldMappingJson    Json?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  workspace  Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  parent     Template?  @relation("TemplateFork", fields: [parentTemplateId], references: [id], onDelete: SetNull)
+  forks      Template[] @relation("TemplateFork")
+  versions   TemplateVersion[]
+  workflows  TemplateWorkflow[]
+  documents  Document[]
+
+  @@index([workspaceId])
+  @@index([isSystemTemplate])
+  @@index([documentType])
+}
+
+model TemplateVersion {
+  id             String   @id @default(uuid()) @db.Uuid
+  templateId     String   @db.Uuid
+  versionNumber  Int
+  sourceFileName String
+  storageKey     String
+  fileUrl        String?
+  fileHash       String
+  fileType       String   @default("pdf")
+  createdAt      DateTime @default(now())
+
+  template Template        @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  fields   TemplateField[]
+
+  @@unique([templateId, versionNumber])
+  @@unique([templateId, fileHash])
+  @@index([templateId])
+  @@index([fileHash])
+}
+
+/// Placed fields for template PDFs (DocuSign-style editor + generation).
+model TemplateField {
+  id                String   @id @default(uuid()) @db.Uuid
+  templateVersionId String   @db.Uuid
+  name              String
+  type              String
+  pageIndex         Int
+  rect              Json
+  defaultValue      String?
+  signerRole        String?
+  dataSourceKey     String?
+  sortOrder         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  templateVersion TemplateVersion @relation(fields: [templateVersionId], references: [id], onDelete: Cascade)
+
+  @@index([templateVersionId])
+}
+
+model TemplateWorkflow {
+  id          String   @id @default(uuid()) @db.Uuid
+  templateId  String   @db.Uuid
+  workflowKey String
+  createdAt   DateTime @default(now())
+
+  template Template            @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  workflow WorkflowDefinition @relation(fields: [workflowKey], references: [key], onDelete: Cascade)
+
+  @@unique([templateId, workflowKey])
+  @@index([workflowKey])
+}

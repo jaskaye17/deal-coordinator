@@ -1,0 +1,13 @@
+{
+  "name": "TX Listing Agreement (Example)",
+  "key": "tx-listing-agreement-example",
+  "version": 1,
+  "documentType": "listing_agreement",
+  "workflows": ["listing", "offer_acceptance"],
+  "jurisdiction": "TX",
+  "tags": ["texas", "listing", "agreement", "example"],
+  "isRequiredByDefault": true,
+  "description": "Example placeholder PDF for global template ingestion (not a legal document).",
+  "notes": "Replace with jurisdiction-specific forms in production.",
+  "fieldMappingJson": null
+}

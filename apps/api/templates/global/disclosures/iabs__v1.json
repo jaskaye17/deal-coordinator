@@ -1,0 +1,12 @@
+{
+  "name": "Information About Brokerage Services (IABS)",
+  "key": "tx-iabs",
+  "version": 1,
+  "documentType": "agency_disclosure",
+  "workflows": ["listing", "buyer_rep", "offer_acceptance"],
+  "jurisdiction": "TX",
+  "tags": ["texas", "iabs", "brokerage", "disclosure"],
+  "isRequiredByDefault": true,
+  "description": "Texas IABS (Information About Brokerage Services). PDF source: TREC IABS 1-2.",
+  "fieldMappingJson": null
+}
