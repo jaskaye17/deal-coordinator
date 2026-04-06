@@ -6,7 +6,8 @@ describe('Validation Schemas', () => {
     it('should accept valid deal', () => {
       const result = createDealSchema.safeParse({
         dealType: 'listing',
-        address: '123 Main St',
+        primaryContactName: 'Jane Seller',
+        propertyAddress: '123 Main St',
       });
       expect(result.success).toBe(true);
     });
@@ -18,9 +19,12 @@ describe('Validation Schemas', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should allow optional fields', () => {
+    it('should allow optional fields when contact and property are present', () => {
       const result = createDealSchema.safeParse({
         dealType: 'buyer_rep',
+        primaryContactName: 'Buyer Co.',
+        propertyAddress: '456 Oak Ave',
+        description: 'optional notes',
       });
       expect(result.success).toBe(true);
     });

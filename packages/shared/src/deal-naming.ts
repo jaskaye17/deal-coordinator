@@ -19,6 +19,7 @@ function stripDiacritics(s: string): string {
 function slugifySegment(raw: string): string {
   const s = stripDiacritics(raw)
     .toLowerCase()
+    .replace(/'/g, '')
     .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
     .trim()
     .replace(/\s+/g, '-')

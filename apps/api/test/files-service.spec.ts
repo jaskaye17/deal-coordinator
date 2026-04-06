@@ -66,7 +66,9 @@ describe('FilesService', () => {
     it('creates a nested folder with parent path', async () => {
       mockPrisma.folder.findUnique.mockResolvedValue({
         id: 'parent-1',
+        workspaceId: 'ws-1',
         path: 'Documents',
+        dealId: 'deal-1',
       });
       mockPrisma.folder.create.mockResolvedValue({
         id: 'folder-2',
