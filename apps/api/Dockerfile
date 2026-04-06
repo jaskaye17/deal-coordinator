@@ -16,12 +16,17 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=deps /app/packages/ ./packages/
 COPY . .
-RUN pnpm --filter @deal-coordinator/db generate
-RUN pnpm --filter @deal-coordinator/api build
+# Workspace deps expose `main` → dist/; nest build needs compiled packages.
+RUN pnpm --filter @deal-coordinator/shared build && \
+    pnpm --filter @deal-coordinator/workflow build && \
+    pnpm --filter @deal-coordinator/config build && \
+    pnpm --filter @deal-coordinator/db generate && \
+    pnpm --filter @deal-coordinator/api build
 
 FROM node:22-alpine AS runner
 WORKDIR /app
 COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages ./packages
 EXPOSE 3001
 CMD ["node", "dist/main.js"]
