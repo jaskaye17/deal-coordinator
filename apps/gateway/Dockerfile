@@ -14,8 +14,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/gateway/node_modules ./apps/gateway/node_modules
 COPY --from=deps /app/packages/ ./packages/
 COPY . .
-RUN pnpm --filter @deal-coordinator/config build
-RUN pnpm --filter @deal-coordinator/gateway build
+RUN pnpm --filter @deal-coordinator/shared build && \
+    pnpm --filter @deal-coordinator/config build && \
+    pnpm --filter @deal-coordinator/gateway build
 
 FROM node:22-alpine AS runner
 WORKDIR /app/apps/gateway
