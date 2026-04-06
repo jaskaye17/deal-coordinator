@@ -13,6 +13,7 @@ async function processJobs() {
   //   - exception routing
   //   - outbound sends (with review gate check)
   console.log('[Worker] Ready for job processing (no jobs configured in Phase 1)');
+  await new Promise<void>(() => {});
 }
 
 processJobs().catch((err) => {

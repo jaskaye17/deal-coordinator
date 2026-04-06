@@ -4,11 +4,31 @@ on:
   push:
     branches: [main]
 
+# Optional: add repository secrets (Render Dashboard → each service → Deploy → Deploy hook):
+#   RENDER_DEPLOY_HOOK_API, RENDER_DEPLOY_HOOK_GATEWAY, RENDER_DEPLOY_HOOK_WORKER
+# Web (Vercel): connect the repo in the Vercel dashboard; it deploys independently.
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - uses: actions/checkout@v4
-      - name: Deploy to staging
-        run: echo "Staging deployment placeholder - configure with your deployment target"
+      - uses: actions/checkout@v5
+
+      - name: Trigger Render API deploy
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_API != '' }}
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_API }}"
+
+      - name: Trigger Render gateway deploy
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_GATEWAY != '' }}
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_GATEWAY }}"
+
+      - name: Trigger Render worker deploy
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_WORKER != '' }}
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_WORKER }}"
+
+      - name: No deploy hooks configured
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_API == '' && secrets.RENDER_DEPLOY_HOOK_GATEWAY == '' && secrets.RENDER_DEPLOY_HOOK_WORKER == '' }}
+        run: |
+          echo "Skipping remote deploy: add RENDER_DEPLOY_HOOK_* secrets or rely on Render auto-deploy from Git."
+          echo "First-time setup: Render Dashboard → New → Blueprint → select repo (render.yaml)."

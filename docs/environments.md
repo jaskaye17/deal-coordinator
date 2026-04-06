@@ -45,10 +45,11 @@ Ports are controlled via env vars (`WEB_PORT`, `API_PORT`, `WORKER_PORT`, `GATEW
 
 Staging validates integrations and data migrations before production traffic.
 
-### Deployment
+### Deployment (quickest path: Render + Vercel)
 
-- **Trigger:** Push to `main` runs `.github/workflows/deploy-staging.yml` (currently a **placeholder** echo step).
-- **Target:** Replace the placeholder with your pipeline: build Docker images (see `apps/api/Dockerfile` as a pattern), push to a registry, and roll out to your cluster or PaaS.
+- **Backend:** Root [`render.yaml`](../render.yaml) defines Render Postgres plus **API**, **gateway**, and **worker** Docker services. In [Render](https://dashboard.render.com): **New → Blueprint**, connect the GitHub repo, apply the blueprint. Fill **sync** env vars when prompted (`S3_*` for real AWS S3). Render can **auto-deploy on push to `main`** without GitHub Actions.
+- **Web:** Create a [Vercel](https://vercel.com) project for `apps/web` (or import the monorepo and set the app root to `apps/web`). Set **`NEXT_PUBLIC_API_URL`** to the **API** service public URL (e.g. `https://deal-coordinator-api.onrender.com`). The **gateway** is for inbound webhooks (e.g. chat); the browser talks to the API directly.
+- **GitHub Actions:** [`.github/workflows/deploy-staging.yml`](../.github/workflows/deploy-staging.yml) optionally **POST**s to Render [deploy hooks](https://render.com/docs/deploy-hooks) if you add secrets `RENDER_DEPLOY_HOOK_API`, `RENDER_DEPLOY_HOOK_GATEWAY`, and `RENDER_DEPLOY_HOOK_WORKER`. If those secrets are empty, rely on Render’s Git-triggered deploys.
 
 ### Environment variables
 

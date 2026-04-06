@@ -1,0 +1,82 @@
+# Render Blueprint: fastest path to hosted backend (Postgres + API + gateway + worker).
+# https://render.com/docs/infrastructure-as-code
+#
+# Setup: Dashboard → New → Blueprint → connect this repo → apply.
+# After first deploy: run Prisma migrations (see docs/environments.md).
+# Web app: deploy separately on Vercel; set NEXT_PUBLIC_API_URL to the API service public URL.
+
+databases:
+  - name: deal-coordinator-db
+    databaseName: deal_coordinator
+    region: oregon
+    plan: basic-256mb
+
+services:
+  - type: web
+    name: deal-coordinator-api
+    runtime: docker
+    region: oregon
+    plan: starter
+    branch: main
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: APP_ENV
+        value: staging
+      - key: DATABASE_URL
+        fromDatabase:
+          name: deal-coordinator-db
+          property: connectionString
+      - key: STORAGE_DRIVER
+        value: s3
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_REGION
+        sync: false
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
+
+  - type: web
+    name: deal-coordinator-gateway
+    runtime: docker
+    region: oregon
+    plan: starter
+    branch: main
+    dockerfilePath: ./apps/gateway/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: APP_ENV
+        value: staging
+      - key: API_INTERNAL_HOSTPORT
+        fromService:
+          name: deal-coordinator-api
+          type: web
+          property: hostport
+
+  - type: worker
+    name: deal-coordinator-worker
+    runtime: docker
+    region: oregon
+    plan: starter
+    branch: main
+    dockerfilePath: ./apps/worker/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: APP_ENV
+        value: staging
+      - key: DATABASE_URL
+        fromDatabase:
+          name: deal-coordinator-db
+          property: connectionString
