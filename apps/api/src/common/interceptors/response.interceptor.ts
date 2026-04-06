@@ -1,15 +1,11 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  StreamableFile,
-} from '@nestjs/common';
-import { Observable, map } from 'rxjs';
+import { Injectable, StreamableFile } from '@nestjs/common';
+import type { NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { map } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
-  intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(_context: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next.handle().pipe(
       map((result) => {
         if (result instanceof StreamableFile) {

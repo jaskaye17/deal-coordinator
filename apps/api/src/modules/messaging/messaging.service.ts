@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { AuditService } from '../audit/audit.service';
-import { FilesService } from '../files/files.service';
+import type { PrismaService } from '../../prisma/prisma.service';
+import type { AuditService } from '../audit/audit.service';
+import type { FilesService } from '../files/files.service';
 import { generateDealName } from '@deal-coordinator/shared';
 import { reserveUniqueDealSlug } from '../deals/deal-slug.util';
 import type { MessagingProvider, InboundMessage } from './messaging-provider.interface';
-import { TwilioProvider } from './providers/twilio.provider';
-import { TwilioWhatsAppProvider } from './providers/twilio-whatsapp.provider';
-import { BlueBubblesProvider } from './providers/bluebubbles.provider';
+import type { TwilioProvider } from './providers/twilio.provider';
+import type { TwilioWhatsAppProvider } from './providers/twilio-whatsapp.provider';
+import type { BlueBubblesProvider } from './providers/bluebubbles.provider';
 
 /** Per-user practice deal created for the phone simulator (title includes user id). */
 export const SANDBOX_DEAL_TITLE_PREFIX = 'Sandbox — phone simulator';
@@ -92,7 +92,7 @@ export class MessagingService {
       return { communication: null, dealId: null };
     }
 
-    let deal = await this.resolveInboundDeal(workspaceId, message, ctx);
+    const deal = await this.resolveInboundDeal(workspaceId, message, ctx);
 
     if (!deal) {
       this.logger.warn(`Inbound message from ${message.from}: no deal matched for workspace`);

@@ -1,8 +1,8 @@
 import { Controller, Post, Get, Delete, Body, Logger } from '@nestjs/common';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
-import { DebugMessagingProvider } from './providers/debug.provider';
-import { MessageProcessingService } from './message-processing.service';
+import type { DebugMessagingProvider } from './providers/debug.provider';
+import type { MessageProcessingService } from './message-processing.service';
 import type { InboundMessage } from './messaging-provider.interface';
 
 /** LLM ON unless the client explicitly turns MOCK on (handles string/body quirks). */

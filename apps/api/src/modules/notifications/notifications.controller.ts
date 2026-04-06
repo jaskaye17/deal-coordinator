@@ -1,5 +1,5 @@
 import { Controller, Post, Param, Body } from '@nestjs/common';
-import { NotificationsService } from './notifications.service';
+import type { NotificationsService } from './notifications.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

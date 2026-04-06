@@ -1,20 +1,17 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Catch, HttpException, HttpStatus } from '@nestjs/common';
+import type { ExceptionFilter, ArgumentsHost } from '@nestjs/common';
+import type { Response, Request } from 'express';
 import { AppError } from '@deal-coordinator/shared';
+
+type RequestWithId = Request & { requestId?: string };
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
-    const requestId = (request as any).requestId ?? 'unknown';
+    const request = ctx.getRequest<RequestWithId>();
+    const requestId = request.requestId ?? 'unknown';
 
     if (exception instanceof AppError) {
       response.status(exception.statusCode).json({

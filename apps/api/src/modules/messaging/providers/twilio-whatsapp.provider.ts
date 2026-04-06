@@ -1,18 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
+import twilio from 'twilio';
 import type { MessagingProvider, SendMessageParams } from '../messaging-provider.interface';
 
 @Injectable()
 export class TwilioWhatsAppProvider implements MessagingProvider {
   readonly channel = 'whatsapp';
   private readonly logger = new Logger(TwilioWhatsAppProvider.name);
-  private client: any = null;
+  private client: ReturnType<typeof twilio> | null = null;
 
   constructor() {
     const sid = process.env.TWILIO_ACCOUNT_SID;
     const token = process.env.TWILIO_AUTH_TOKEN;
     if (sid && token) {
       try {
-        const twilio = require('twilio');
         this.client = twilio(sid, token);
       } catch {
         this.logger.warn('Twilio SDK not available for WhatsApp');

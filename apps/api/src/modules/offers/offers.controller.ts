@@ -7,8 +7,8 @@ import {
   Query,
   Body,
 } from '@nestjs/common';
-import { OffersService } from './offers.service';
-import { OfferComparisonService } from '../offer-comparison/offer-comparison.service';
+import type { OffersService } from './offers.service';
+import type { OfferComparisonService } from '../offer-comparison/offer-comparison.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

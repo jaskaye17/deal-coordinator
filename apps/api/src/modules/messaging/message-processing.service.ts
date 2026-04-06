@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { AuditService } from '../audit/audit.service';
-import { LLMService } from '../llm/llm.service';
-import { MessagingService, SANDBOX_DEAL_TITLE_PREFIX } from './messaging.service';
+import type { PrismaService } from '../../prisma/prisma.service';
+import type { AuditService } from '../audit/audit.service';
+import type { LLMService } from '../llm/llm.service';
+import type { MessagingService} from './messaging.service';
+import { SANDBOX_DEAL_TITLE_PREFIX } from './messaging.service';
 import type { InboundMessage } from './messaging-provider.interface';
 import {
   formatBrokerageWorkspaceReply,

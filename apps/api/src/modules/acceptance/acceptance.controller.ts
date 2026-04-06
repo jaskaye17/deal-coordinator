@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Param } from '@nestjs/common';
-import { AcceptanceService } from './acceptance.service';
+import type { AcceptanceService } from './acceptance.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

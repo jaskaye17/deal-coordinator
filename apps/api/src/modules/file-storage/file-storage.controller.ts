@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Param } from '@nestjs/common';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
-import { FileStorageService } from './file-storage.service';
+import type { FileStorageService } from './file-storage.service';
 
 @Controller('deals/:dealId')
 export class FileStorageController {
