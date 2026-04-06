@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { AuthService } from '../auth/auth.service';
-import { UserAiService } from './user-ai.service';
+import type { AuthService } from '../auth/auth.service';
+import type { UserAiService } from './user-ai.service';
 
 const putOpenAISchema = z.object({
   apiKey: z.string().min(8, 'API key looks too short'),

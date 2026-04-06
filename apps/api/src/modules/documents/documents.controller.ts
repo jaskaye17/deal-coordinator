@@ -1,5 +1,5 @@
 import { Controller, Get, Header, Post, Param, Query, StreamableFile } from '@nestjs/common';
-import { DocumentsService } from './documents.service';
+import type { DocumentsService } from './documents.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

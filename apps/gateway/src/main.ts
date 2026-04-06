@@ -56,7 +56,7 @@ const server = createServer(async (req, res) => {
   }
 });
 
-const port = parseInt(process.env.GATEWAY_PORT || '3003', 10);
+const port = parseInt(process.env.PORT || process.env.GATEWAY_PORT || '3003', 10);
 server.listen(port, () => {
   console.log(`[Gateway] Listening on port ${port}`);
 });

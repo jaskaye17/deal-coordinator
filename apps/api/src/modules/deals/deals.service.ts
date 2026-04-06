@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { AuditService } from '../audit/audit.service';
-import { FilesService } from '../files/files.service';
+import type { PrismaService } from '../../prisma/prisma.service';
+import type { AuditService } from '../audit/audit.service';
+import type { FilesService } from '../files/files.service';
 import {
   AppError,
   DEFAULT_PAGE_SIZE,

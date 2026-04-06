@@ -1,6 +1,7 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import { PrismaService } from '../../prisma/prisma.service';
+import type { NestMiddleware } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import type { Request, Response, NextFunction } from 'express';
+import type { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class TenantContextMiddleware implements NestMiddleware {

@@ -18,6 +18,15 @@ export interface EnvConfig {
   openaiApiKey?: string;
 }
 
+/** Prefer API_URL; on Render, API_INTERNAL_HOSTPORT (fromService hostport) reaches the API over the private network. */
+function resolveApiUrl(env: NodeJS.ProcessEnv): string {
+  if (env.API_URL) return env.API_URL;
+  if (env.API_INTERNAL_HOSTPORT) {
+    return `http://${env.API_INTERNAL_HOSTPORT}`;
+  }
+  return 'http://localhost:3001';
+}
+
 export function getEnvConfig(): EnvConfig {
   const env = process.env;
 
@@ -26,8 +35,8 @@ export function getEnvConfig(): EnvConfig {
     appEnv: (env.APP_ENV as EnvConfig['appEnv']) ?? 'local',
     databaseUrl: env.DATABASE_URL ?? 'postgresql://postgres:postgres@localhost:5432/deal_coordinator',
     redisUrl: env.REDIS_URL ?? 'redis://localhost:6379',
-    apiPort: parseInt(env.API_PORT ?? '3001', 10),
-    apiUrl: env.API_URL ?? 'http://localhost:3001',
+    apiPort: parseInt(env.PORT || env.API_PORT || '3001', 10),
+    apiUrl: resolveApiUrl(env),
     webPort: parseInt(env.WEB_PORT ?? '3000', 10),
     authSecret: env.AUTH_SECRET ?? 'dev-secret-change-in-production',
     storageDriver: (env.STORAGE_DRIVER as EnvConfig['storageDriver']) ?? 'local',

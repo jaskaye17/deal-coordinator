@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
+import type {
+  FileStorageProvider} from './file-storage.interface';
 import {
-  FILE_STORAGE_PROVIDER,
-  FileStorageProvider,
+  FILE_STORAGE_PROVIDER
 } from './file-storage.interface';
-import { AuditService } from '../audit/audit.service';
+import type { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class FileStorageService {

@@ -6,7 +6,7 @@ import {
   Query,
   Body,
 } from '@nestjs/common';
-import { ReviewTasksService } from './review-tasks.service';
+import type { ReviewTasksService } from './review-tasks.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

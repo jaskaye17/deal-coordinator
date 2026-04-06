@@ -5,8 +5,8 @@ import {
   Param,
   Body,
 } from '@nestjs/common';
-import { SignaturesService } from './signatures.service';
-import { ReviewTasksService } from '../review-tasks/review-tasks.service';
+import type { SignaturesService } from './signatures.service';
+import type { ReviewTasksService } from '../review-tasks/review-tasks.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 import { AppError } from '@deal-coordinator/shared';

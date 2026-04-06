@@ -1,5 +1,5 @@
 import { Controller, Post, Param } from '@nestjs/common';
-import { KeyDatesService } from './key-dates.service';
+import type { KeyDatesService } from './key-dates.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

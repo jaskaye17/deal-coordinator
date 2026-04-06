@@ -4,11 +4,39 @@ on:
   push:
     branches: [main]
 
+# Optional: add repository secrets (Render Dashboard → each service → Deploy → Deploy hook):
+#   RENDER_DEPLOY_HOOK_API, RENDER_DEPLOY_HOOK_GATEWAY, RENDER_DEPLOY_HOOK_WORKER
+# Web (Vercel): connect the repo in the Vercel dashboard; it deploys independently.
+#
+# Note: `secrets` cannot be used in `if:` expressions; hooks are triggered via env + shell.
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - uses: actions/checkout@v4
-      - name: Deploy to staging
-        run: echo "Staging deployment placeholder - configure with your deployment target"
+      - uses: actions/checkout@v5
+
+      - name: Trigger Render deploy hooks (if configured)
+        env:
+          HOOK_API: ${{ secrets.RENDER_DEPLOY_HOOK_API }}
+          HOOK_GATEWAY: ${{ secrets.RENDER_DEPLOY_HOOK_GATEWAY }}
+          HOOK_WORKER: ${{ secrets.RENDER_DEPLOY_HOOK_WORKER }}
+        run: |
+          triggered=0
+          if [ -n "$HOOK_API" ]; then
+            curl -fsS -X POST "$HOOK_API"
+            triggered=1
+          fi
+          if [ -n "$HOOK_GATEWAY" ]; then
+            curl -fsS -X POST "$HOOK_GATEWAY"
+            triggered=1
+          fi
+          if [ -n "$HOOK_WORKER" ]; then
+            curl -fsS -X POST "$HOOK_WORKER"
+            triggered=1
+          fi
+          if [ "$triggered" -eq 0 ]; then
+            echo "No RENDER_DEPLOY_HOOK_* secrets set — skipping curl deploys."
+            echo "Render can still auto-deploy from Git, or add hooks under repo → Settings → Secrets."
+          fi

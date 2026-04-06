@@ -1,5 +1,5 @@
 import { Controller, Get, Patch, Param, Body } from '@nestjs/common';
-import { WorkspacesService } from './workspaces.service';
+import type { WorkspacesService } from './workspaces.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 import { AppError } from '@deal-coordinator/shared';

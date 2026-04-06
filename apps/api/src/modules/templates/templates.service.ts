@@ -13,7 +13,7 @@ import {
   type FileStorageProvider,
 } from '../file-storage/file-storage.interface';
 import { Prisma } from '@deal-coordinator/db';
-import { TemplateFieldDetectionService } from './template-field-detection.service';
+import type { TemplateFieldDetectionService } from './template-field-detection.service';
 import { readBytesFromStorageKey } from '../../common/storage-read.util';
 
 function slugifyKey(s: string): string {
@@ -389,7 +389,7 @@ export class TemplatesService {
     const exists = await this.prisma.template.findUnique({ where: { slug } });
     if (exists) throw new BadRequestException('Slug already in use');
 
-    let parentTemplateId: string | null = body.parentTemplateId ?? null;
+    const parentTemplateId: string | null = body.parentTemplateId ?? null;
     if (parentTemplateId) {
       const parent = await this.prisma.template.findFirst({
         where: {

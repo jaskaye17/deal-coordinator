@@ -1,5 +1,5 @@
 import { Controller, Get, Patch, Param, Query, Body } from '@nestjs/common';
-import { UnresolvedItemsService } from './unresolved-items.service';
+import type { UnresolvedItemsService } from './unresolved-items.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import type { PrismaService } from '../../prisma/prisma.service';
 import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@deal-coordinator/shared';
 
 export interface CreateAuditEventParams {
