@@ -1,6 +1,6 @@
 # Vercel: first-time project setup (web app)
 
-The Next.js app lives in **`apps/web`**. This repo uses **`apps/web/vercel.json`** so install and build run from the monorepo root (`pnpm install …`, `pnpm run build:web …`).
+The Next.js app lives in **`apps/web`**. This repo uses **`apps/web/vercel.json`**: install runs **`pnpm install --frozen-lockfile`** from the repo root, and build runs **`pnpm exec turbo run build --filter=@deal-coordinator/web`** so workspace packages such as **`@deal-coordinator/shared`** are built before **`next build`** (their `package.json` **`main`** points at **`dist/`**).
 
 ## Option A — Vercel Dashboard (recommended first time)
 
