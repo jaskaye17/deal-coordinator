@@ -45,11 +45,32 @@ Ports are controlled via env vars (`WEB_PORT`, `API_PORT`, `WORKER_PORT`, `GATEW
 
 Staging validates integrations and data migrations before production traffic.
 
-### Deployment (quickest path: Render + Vercel)
+### Deployment (Render + Vercel on `main`)
 
-- **Backend:** Root [`render.yaml`](../render.yaml) defines Render Postgres plus **API**, **gateway**, and **worker** Docker services. In [Render](https://dashboard.render.com): **New → Blueprint**, connect the GitHub repo, apply the blueprint. Fill **sync** env vars when prompted (`S3_*` for real AWS S3). Render can **auto-deploy on push to `main`** without GitHub Actions.
-- **Web:** Create a [Vercel](https://vercel.com) project for `apps/web` (or import the monorepo and set the app root to `apps/web`). Set **`NEXT_PUBLIC_API_URL`** to the **API** service public URL (e.g. `https://deal-coordinator-api.onrender.com`). The **gateway** is for inbound webhooks (e.g. chat); the browser talks to the API directly.
-- **GitHub Actions:** [`.github/workflows/deploy-staging.yml`](../.github/workflows/deploy-staging.yml) optionally **POST**s to Render [deploy hooks](https://render.com/docs/deploy-hooks) if you add secrets `RENDER_DEPLOY_HOOK_API`, `RENDER_DEPLOY_HOOK_GATEWAY`, and `RENDER_DEPLOY_HOOK_WORKER`. If those secrets are empty, rely on Render’s Git-triggered deploys.
+**Goal:** every push to **`main`** that passes [CI](../.github/workflows/ci.yml) deploys the **Render** Docker services; the **web** app deploys via **Vercel** (Git integration or optional GitHub Action).
+
+#### Render (API, gateway, worker, Postgres)
+
+1. In [Render](https://dashboard.render.com): **New → Blueprint**, connect this GitHub repo, apply [`render.yaml`](../render.yaml).
+2. Link the repo with **GitHub** for automatic deploys from **`main`**.
+3. Each service is pinned to **`branch: main`**. The blueprint uses **`autoDeployTrigger: commit`**, so Render deploys on **every** push to `main`. To deploy **only after** GitHub Actions CI succeeds, set **`autoDeployTrigger: checksPass`** for each service in `render.yaml` and sync the blueprint (Render must be able to see your CI checks on the repo).
+4. Fill **sync** env vars when prompted (for example `S3_*` when using real S3).
+5. **Deploy hooks (optional):** only if a service is **not** Git-linked, add [deploy hook](https://render.com/docs/deploy-hooks) URLs to the GitHub **`staging`** environment as `RENDER_DEPLOY_HOOK_API`, `RENDER_DEPLOY_HOOK_GATEWAY`, and `RENDER_DEPLOY_HOOK_WORKER`. [`.github/workflows/deploy-staging.yml`](../.github/workflows/deploy-staging.yml) POSTs them after CI. If services already auto-deploy from Git, leave these empty to avoid double deploys.
+
+#### Vercel (`apps/web`)
+
+1. Create a [Vercel](https://vercel.com) project from this repo.
+2. **Root Directory:** `apps/web`.
+3. **Monorepo / workspace files:** For projects created after Aug 2020, Vercel usually **already includes** source outside the root directory ([faq](https://vercel.com/docs/monorepos/monorepo-faq)). The **new-project** flow may not show a toggle. If the build cannot resolve `@deal-coordinator/shared` / `@deal-coordinator/ui`, open **Settings → General** → **Root Directory** and enable the equivalent option. [`apps/web/vercel.json`](../apps/web/vercel.json) runs install/build from the monorepo root.
+4. Set **`NEXT_PUBLIC_API_URL`** to the public **API** URL (for example `https://deal-coordinator-api.onrender.com`). The **gateway** is for inbound webhooks; the browser calls the API directly.
+5. **Production branch:** set to **`main`** (Vercel → Project → Settings → Git) so production deploys track `main`.
+6. **Option A — Vercel Git (simplest):** connect the repo in Vercel; it deploys on pushes to `main` per your Git settings. Optionally turn on “wait for CI” / deployment protection in Vercel if you want parity with Render.
+7. **Option B — GitHub Action:** add secrets on the GitHub **`staging`** environment: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` (from Vercel → Project → Settings → General, or from `.vercel/project.json` after `vercel link`). [`.github/workflows/deploy-staging.yml`](../.github/workflows/deploy-staging.yml) runs `vercel deploy --prod` after CI when all three are set. Skip this if you use Option A only.
+
+#### GitHub
+
+- Create a **`staging`** [environment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment) if you use deploy hooks or Vercel secrets above.
+- **Manual run:** the deploy workflow also supports **`workflow_dispatch`** from the Actions tab.
 
 ### Environment variables
 
@@ -66,13 +87,13 @@ Mirror production **shape** but use **non-production** credentials:
 | `STORAGE_DRIVER` | `s3` for shared staging buckets, or `local` for single-node experiments. |
 | `AI_PROVIDER` | `fake` for deterministic QA, or `openai` with a **scoped** API key. |
 
-Run migrations as a deploy step:
+Run migrations as a deploy step (see [cicd.md](cicd.md) for the full `main` / Render / Vercel order):
 
 ```bash
 pnpm --filter @deal-coordinator/db exec prisma migrate deploy
 ```
 
-(Execute in CI/CD or release container with `DATABASE_URL` injected.)
+**Automated on `main`:** set GitHub repository secret **`STAGING_DATABASE_URL`** to the same Postgres URL Render uses; [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs `migrate deploy` on each push to `main` after tests (when the secret is set).
 
 ### Database
 

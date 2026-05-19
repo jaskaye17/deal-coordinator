@@ -8,7 +8,7 @@ import {
   Query,
   StreamableFile,
 } from '@nestjs/common';
-import type { FilesService } from './files.service';
+import { FilesService } from './files.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { FileRoutingKind, TenantContext } from '@deal-coordinator/shared';
 

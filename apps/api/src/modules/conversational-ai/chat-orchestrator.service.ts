@@ -1,18 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import type { PrismaService } from '../../prisma/prisma.service';
-import type { AuditService } from '../audit/audit.service';
-import type { DealsService } from '../deals/deals.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
+import { DealsService } from '../deals/deals.service';
 import {
   formatBrokerageWorkspaceReply,
   formatMissingWorkspaceNameReply,
 } from '../messaging/brokerage-workspace-question.util';
-import type { LLMService } from '../llm/llm.service';
-import type { AssistantToolsService } from './assistant-tools.service';
+import { LLMService } from '../llm/llm.service';
+import { AssistantToolsService } from './assistant-tools.service';
 import type { AssistantBackendFacts, IntentDetectionResult } from './conversational-ai.types';
-import type { ConversationalIntentService } from './conversational-intent.service';
-import type { ConversationContextService } from './conversation-context.service';
-import type { ConversationQueryService } from './conversation-query.service';
-import type { GuidanceEngineService } from './guidance-engine.service';
+import { ConversationalIntentService } from './conversational-intent.service';
+import { ConversationContextService } from './conversation-context.service';
+import { ConversationQueryService } from './conversation-query.service';
+import { GuidanceEngineService } from './guidance-engine.service';
 import type { PlaybookDealSnapshot } from './listing-playbooks';
 
 export type ChatOrchestratorResult = {

@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import type { DashboardService } from './dashboard.service';
+import { DashboardService } from './dashboard.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

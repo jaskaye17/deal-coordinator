@@ -8,7 +8,7 @@ import {
   Body,
   UsePipes,
 } from '@nestjs/common';
-import type { MemoryService } from './memory.service';
+import { MemoryService } from './memory.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 import { createMemorySchema } from '@deal-coordinator/shared';

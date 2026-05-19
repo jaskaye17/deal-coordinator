@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import type { PrismaService } from '../../prisma/prisma.service';
-import type { AuditService } from '../audit/audit.service';
-import type { CalendarEventsService } from '../calendar-events/calendar-events.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
+import { CalendarEventsService } from '../calendar-events/calendar-events.service';
 import { AppError } from '@deal-coordinator/shared';
 
 export interface ExtractedKeyDate {

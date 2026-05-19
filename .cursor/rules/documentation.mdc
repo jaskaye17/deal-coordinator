@@ -1,0 +1,32 @@
+---
+description: Keep internal and support documentation updated when product or system behavior changes
+alwaysApply: true
+---
+
+# Documentation maintenance
+
+The repo splits documentation by **audience** (see `docs/README.md`).
+
+## When you change code or config
+
+1. **User-visible behavior** (UI, flows, copy, permissions, messaging/SMS-facing logic): update or add an article under `docs/support/` in the same change when practical. **Product positioning** is **text-first AI transaction coordinator for realtors** (`docs/vision.md`); prefer **“texting your TC”** over brokerage-only framing unless the change is explicitly team/broker-facing.
+
+2. **Architecture, APIs, tenancy, data model, infra, CI/CD**: update `docs/architecture.md`, `docs/environments.md`, or `docs/cicd.md` as appropriate.
+
+3. **Durable technical choice** (tradeoffs, policies): add or revise an ADR under `docs/adr/` (next number; do not rewrite history of shipped decisions—add a new ADR if the decision changes).
+
+4. **Product initiative** (problem, scope, metrics, rollout): add a PRD under `docs/internal/product/` using `_template-prd.md`; link it from the product README index table. Align PRDs with `docs/vision.md` (realtor-first, text-first).
+
+5. **Phase / roadmap** shifts: update `docs/phase1.md` or successor phase docs.
+
+6. **Positioning / pitch**: update `docs/vision.md` and skim `README.md`, `docs/support/` intros, and `docs/phase1.md` for consistency.
+
+## Hygiene
+
+- Keep `docs/README.md` hub links accurate when adding major sections.
+- Do not commit secrets; use placeholders in docs and point to env var names.
+- Avoid duplicating long technical blocks in support docs—summarize for users and link to architecture for builders.
+
+## Goal
+
+Support future **in-app tours** (e.g. Pendo) and **text-message onboarding** by maintaining short, single-topic support pages that can be quoted or split into SMS-sized steps.

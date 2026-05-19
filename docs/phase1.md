@@ -1,10 +1,12 @@
 # Phase 1
 
-This document summarizes what Phase 1 of Deal Coordinator is meant to deliver, what exists in the repository today, what was explicitly deferred, known limitations, and a high-level Phase 2 roadmap.
+**Product intent:** build toward an **AI transaction coordinator for realtors** that is **text first**—proactive, deal-aware messaging where the user does **not** need to know if the coordinator is AI or human (see [`vision.md`](vision.md)). Phase 1 is a **vertical slice** of data, workflows, ingest, and a **supporting web UI**; broker-grade **workspace** features exist as infrastructure for a later **brokerage** trajectory, not the primary pitch.
+
+This document summarizes what Phase 1 is meant to deliver, what exists in the repository today, what was explicitly deferred, known limitations, and a high-level Phase 2 roadmap.
 
 ## Scope and deliverables
 
-Phase 1 targets a **coherent vertical slice** for a multi-tenant real estate brokerage:
+Phase 1 targets a **coherent vertical slice** (multi-tenant **workspace** model included for future scale):
 
 1. **Workspace model** — Workspaces, memberships, roles, and workspace-scoped settings (confidence thresholds, review gate policy, audit retention metadata).
 2. **Deal operations** — Create and list deals, maintain deal fields with provenance and confidence, transition stages via an in-code workflow engine with role guards.
@@ -21,12 +23,12 @@ Phase 1 targets a **coherent vertical slice** for a multi-tenant real estate bro
 - **Apps:** `web`, `api`, `gateway`, and a **worker shell** that starts and logs readiness (no job consumption).
 - **Packages:** `db` (full Prisma schema and migrations), `shared` (schemas/types), `workflow` (machines + guards), `ui`, `config`.
 - **Tenancy:** Middleware-enforced `x-workspace-id` + `x-user-id` with membership checks; services scope Prisma queries by `workspaceId`.
-- **API:** Nest modules for auth stub, workspaces, deals, chat, audit, unresolved items, communications, memory, exceptions, deal query, dashboard; global exception filter and response envelope.
+- **API:** Nest modules for **auth** (email/password + optional Auth0 JWT), workspaces, deals, chat, audit, unresolved items, communications, memory, exceptions, deal query, dashboard, and additional domains (files, templates, offers, signatures, calendar, messaging, tasks, review tasks, etc.); global exception filter and response envelope.
 - **CI:** GitHub Actions workflow for install, Prisma generate, lint, typecheck, test, build against Postgres 16.
 
 ## Deferred to Phase 2
 
-- **Real authentication** — OIDC/OAuth2 or similar; removal of trust-on-headers for non-demo environments.
+- **Production-grade identity** — Full SSO/session lifecycles, device trust, and hardening so no API relies on user-supplied tenant headers without strong session binding.
 - **Temporal (or equivalent)** — Durable workflows, retries, and scheduled activities for reminders and outbound sends.
 - **Worker queue** — Redis/BullMQ (or Temporal workers) for async processing; today’s worker is intentional placeholder.
 - **Production AI** — Live LLM integration with monitoring, prompt versioning, and cost controls (interface exists; default is `fake`).
@@ -37,7 +39,7 @@ Phase 1 targets a **coherent vertical slice** for a multi-tenant real estate bro
 
 ## Known limitations
 
-- **Security:** Header-based identity is suitable **only** for local demo and controlled tests; it must not be exposed to the public internet without a terminating auth layer.
+- **Security:** Email/password auth exists for the web app, but public-hardening (rate limits, MFA, full session cookies vs headers) is incomplete. Tenant context still uses `x-workspace-id` / `x-user-id` on API calls; use **HTTPS** and a trusted browser client only.
 - **Synchronous workflow:** Stage transitions and chat handling run in the API process; heavy load or long LLM calls will block request threads until async infrastructure exists.
 - **Single region / no HA story in repo** — Deployment topology, failover, and multi-region replication are operator concerns not encoded in Phase 1.
 - **Audit retention:** Policy fields exist; automated archival/purge is not implemented.

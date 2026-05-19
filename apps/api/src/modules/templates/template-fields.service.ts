@@ -3,8 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type { PrismaService } from '../../prisma/prisma.service';
-import type { TemplateFieldDetectionService } from './template-field-detection.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { TemplateFieldDetectionService } from './template-field-detection.service';
 import { readBytesFromStorageKey } from '../../common/storage-read.util';
 import {
   FILE_STORAGE_PROVIDER,

@@ -8,7 +8,7 @@ import {
   Body,
   UsePipes,
 } from '@nestjs/common';
-import type { ExceptionsService } from './exceptions.service';
+import { ExceptionsService } from './exceptions.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 import {

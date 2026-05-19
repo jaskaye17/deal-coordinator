@@ -1,5 +1,5 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
-import type { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { FAKE_LLM_PROVIDER } from './llm-provider.interface';
 import type { LLMProvider, LLMResponse } from './llm-provider.interface';
 import { openaiComplete, openaiCompleteJson } from './openai-runtime';

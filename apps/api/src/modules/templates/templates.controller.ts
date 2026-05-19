@@ -19,9 +19,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 import type { Template } from '@deal-coordinator/db';
-import type { TemplatesService } from './templates.service';
-import type { TemplateIngestionService } from './template-ingestion.service';
-import type { TemplateFieldsService } from './template-fields.service';
+import { TemplatesService } from './templates.service';
+import { TemplateIngestionService } from './template-ingestion.service';
+import { TemplateFieldsService } from './template-fields.service';
 
 type UploadedPdfFile = {
   buffer: Buffer;

@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Req, Logger } from '@nestjs/common';
 import type { Request } from 'express';
-import type { MessagingService } from './messaging.service';
+import { MessagingService } from './messaging.service';
 import type { InboundMessage } from './messaging-provider.interface';
 
 @Controller('webhooks')

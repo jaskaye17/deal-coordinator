@@ -1,6 +1,8 @@
 # Deal Coordinator
 
-Multi-tenant AI transaction coordinator for real estate brokerages. Teams capture deal context from chat and structured workflows, route exceptions, and keep an auditable history of what changed and why—without giving up workspace isolation.
+**AI transaction coordinator for realtors—text first.** The product is built so a realtor can work with a **transaction coordinator over SMS/messaging** the same way many do with a human TC today: **opaque** whether the other side is AI or a person, with **proactive** follow-ups, reminders, and deal-level communication. The **web app** is supporting (full deal picture, docs, settings), not the primary interaction model.
+
+The codebase is **multi-tenant** (workspaces) so **brokerages and teams** can be served later; that is a **growth trajectory**, not the immediate target user story. See [`docs/vision.md`](docs/vision.md).
 
 ## Tech stack
 
@@ -19,7 +21,7 @@ Multi-tenant AI transaction coordinator for real estate brokerages. Teams captur
 ```
 deal-coordinator/
 ├── apps/
-│   ├── web/        # Next.js brokerage UI
+│   ├── web/        # Next.js UI (secondary to text-first coordinator experience)
 │   ├── api/        # NestJS REST API
 │   ├── worker/     # Background jobs (Phase 1: placeholder loop)
 │   └── gateway/    # Chat webhook ingress → API
@@ -29,7 +31,7 @@ deal-coordinator/
 │   ├── ui/         # Shared React components
 │   ├── workflow/   # Deal stage state machines & transition guards
 │   └── config/     # Typed env loading
-├── docs/           # Architecture, environments, phase notes, ADRs
+├── docs/           # [Documentation hub](docs/README.md): internal (PRDs, ADRs), support (onboarding), architecture
 └── scripts/        # setup.sh, dev helpers
 ```
 
@@ -145,6 +147,11 @@ A fuller variable reference and per-environment notes live in [docs/environments
 
 High-level system design, tenancy model, API conventions, workflow engine, chat ingestion path, and AI/audit policies are documented in [docs/architecture.md](docs/architecture.md).
 
+## Documentation hub
+
+- **[docs/README.md](docs/README.md)** — full map: **internal** (PRDs, ADRs, engineering), **support** (customer-facing onboarding), and shared references.
+- **Cursor:** `.cursor/rules/documentation.mdc` reminds contributors and agents to update the right docs with code changes.
+
 ## Phase 1 scope (summary)
 
 Phase 1 delivers an end-to-end **vertical slice**: multi-tenant API with header-based workspace context, deal CRUD and stage transitions backed by an in-repo state machine, chat ingest (gateway → API) with a **fake** AI parser, unresolved items and exceptions, communications and memory surfaces, dashboard metrics, and append-only audit events. Auth is stubbed via `x-user-id` / `x-workspace-id` headers; the worker and Redis-backed jobs are placeholders.
@@ -153,9 +160,11 @@ See [docs/phase1.md](docs/phase1.md) for deliverables, deferred work, limitation
 
 ## CI/CD
 
-- **CI** (`.github/workflows/ci.yml`): on pushes and PRs to `main`, installs with pnpm, runs Prisma generate, lint, typecheck, test, and build against PostgreSQL 16.
-- **Staging backend** ([`render.yaml`](render.yaml)): Render **Blueprint** (Postgres + API + gateway + worker Docker services). See **Staging** in [docs/environments.md](docs/environments.md). **Staging** workflow (`.github/workflows/deploy-staging.yml`) optionally triggers Render **deploy hooks** when `RENDER_DEPLOY_HOOK_*` secrets are set; otherwise Render auto-deploys from Git.
-- **Web:** deploy `apps/web` on **Vercel** (separate from Render); set `NEXT_PUBLIC_API_URL` to the hosted API URL.
+- **CI** (`.github/workflows/ci.yml`): on pushes and PRs to `main`, installs with pnpm, runs Prisma generate, lint, typecheck, test, and build against PostgreSQL 16. On **`main` pushes**, if repository secret **`STAGING_DATABASE_URL`** is set, also runs **`prisma migrate deploy`** against that database before the final build step.
+- **Pipeline / branching:** [docs/cicd.md](docs/cicd.md) — order of CI vs Render vs Vercel, **`checksPass` vs `commit`**, previews, and when to seed.
+- **Staging backend** ([`render.yaml`](render.yaml)): Render **Blueprint** (Postgres + API + gateway + worker on **`main`**). Services use **`autoDeployTrigger: commit`** so Render deploys on each push to `main` (set to **`checksPass`** in `render.yaml` if you want deploys only after GitHub CI succeeds). See [docs/environments.md](docs/environments.md) for deploy hooks and Vercel setup.
+- **Deploy Staging** (`.github/workflows/deploy-staging.yml`): runs after **CI** completes successfully on a **push to `main`** (and on manual `workflow_dispatch`). Optionally POSTs Render **deploy hooks** if `RENDER_DEPLOY_HOOK_*` secrets are set; optionally runs **`vercel deploy --prod`** if `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` are set on the **`staging`** GitHub environment (otherwise use Vercel’s Git integration for `apps/web`).
+- **Web:** deploy `apps/web` on **Vercel** with root directory `apps/web` and [`apps/web/vercel.json`](apps/web/vercel.json); set `NEXT_PUBLIC_API_URL` to the hosted API URL. First-time steps: [docs/vercel-first-setup.md](docs/vercel-first-setup.md) and [`scripts/vercel-link-web.sh`](scripts/vercel-link-web.sh).
 - **Production** (`.github/workflows/deploy-production.yml`): still a placeholder; mirror the Render blueprint in a second workspace or promote images when you are ready.
 
 Configure GitHub Environments (`staging`, `production`) with required reviewers and secrets as you harden production.
@@ -164,7 +173,7 @@ Configure GitHub Environments (`staging`, `production`) with required reviewers 
 
 1. Branch from `main`, keep changes focused, and match existing formatting (Prettier, ESLint).
 2. Run `pnpm lint`, `pnpm typecheck`, and `pnpm test` before opening a PR.
-3. For behavioral or structural decisions, add or update an ADR under `docs/adr/` (see existing numbered records).
+3. For behavioral or structural decisions, add or update an ADR under `docs/adr/` (see existing numbered records). For product initiatives, use [docs/internal/product/](docs/internal/product/README.md). For end-user-visible changes, update [docs/support/](docs/support/README.md) when practical.
 4. Database changes go through Prisma migrations in `packages/db/prisma/migrations`; avoid editing applied migration history.
 
 Architectural decisions are recorded as [Architecture Decision Records](docs/adr/) in `docs/adr/`.

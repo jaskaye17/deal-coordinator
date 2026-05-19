@@ -1,6 +1,6 @@
 # Architecture
 
-This document describes how the Deal Coordinator monorepo is structured at runtime, how tenants are isolated, and how the main product flows (chat ingest, workflows, AI, audit) fit together. It reflects **Phase 1** behavior unless noted as future work.
+This document describes how the Deal Coordinator monorepo is structured at runtime, how tenants are isolated, and how the main product flows (chat ingest, workflows, AI, audit) fit together. **Product direction** is a **text-first AI transaction coordinator for realtors** ([`vision.md`](vision.md)); **web** and **workspace** features support that story and future brokerage scale. It reflects **Phase 1** behavior unless noted as future work.
 
 ## System overview
 
@@ -8,7 +8,7 @@ The product is split into four deployable **apps** and five shared **packages**:
 
 | Unit | Role |
 | --- | --- |
-| **web** (`apps/web`) | Next.js UI for agents and admins: deals, settings, dashboard, intake/confidence UX. |
+| **web** (`apps/web`) | Next.js **supporting** UI (deal picture, docs, settings). **Primary** experience is **messaging** to the coordinator; same API and tenancy model. |
 | **api** (`apps/api`) | NestJS HTTP API: REST resources, tenant middleware, orchestration, Prisma persistence. |
 | **worker** (`apps/worker`) | Reserved for async jobs; Phase 1 logs readiness only (no queue consumer). |
 | **gateway** (`apps/gateway`) | Minimal HTTP server: `POST /webhook/chat` forwards payloads to the API’s chat ingest route; `GET /health`. |

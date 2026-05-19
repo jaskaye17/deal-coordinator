@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import {
   OPENAI_USER_CONNECTION_PROVIDER,
   SIMULATOR_AGENT_CONNECTION_PROVIDER,

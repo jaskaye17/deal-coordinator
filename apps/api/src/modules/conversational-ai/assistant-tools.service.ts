@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { ConversationQueryService } from './conversation-query.service';
+import { ConversationQueryService } from './conversation-query.service';
 
 /**
  * Named tools the orchestrator (and future tool-calling LLMs) can invoke.

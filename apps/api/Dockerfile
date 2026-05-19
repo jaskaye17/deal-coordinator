@@ -23,10 +23,13 @@ RUN pnpm --filter @deal-coordinator/shared build && \
     pnpm --filter @deal-coordinator/db generate && \
     pnpm --filter @deal-coordinator/api build
 
+# pnpm keeps API deps under apps/api/node_modules (symlinks → ../../.. /node_modules/.pnpm).
+# Running from /app with only root node_modules breaks resolution (e.g. reflect-metadata).
 FROM node:22-alpine AS runner
-WORKDIR /app
+WORKDIR /app/apps/api
+COPY --from=builder /app/node_modules /app/node_modules
+COPY --from=builder /app/packages /app/packages
 COPY --from=builder /app/apps/api/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps/api/node_modules ./node_modules
 EXPOSE 3001
 CMD ["node", "dist/main.js"]
