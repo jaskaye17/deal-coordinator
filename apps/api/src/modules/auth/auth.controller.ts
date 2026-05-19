@@ -9,7 +9,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import type { Request } from 'express';
-import type { AuthService } from './auth.service';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {

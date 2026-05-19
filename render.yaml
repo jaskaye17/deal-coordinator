@@ -4,6 +4,8 @@
 # Setup: Dashboard → New → Blueprint → connect this repo → apply.
 # After first deploy: run Prisma migrations (see docs/environments.md).
 # Web app: deploy separately on Vercel; set NEXT_PUBLIC_API_URL to the API service public URL.
+# Services use autoDeployTrigger: commit — each push to `main` triggers a deploy (even if CI fails).
+# Use `checksPass` instead if you want Render to wait until GitHub Actions CI succeeds.
 
 databases:
   - name: deal-coordinator-db
@@ -18,6 +20,7 @@ services:
     region: oregon
     plan: starter
     branch: main
+    autoDeployTrigger: commit
     dockerfilePath: ./apps/api/Dockerfile
     dockerContext: .
     healthCheckPath: /health
@@ -49,6 +52,7 @@ services:
     region: oregon
     plan: starter
     branch: main
+    autoDeployTrigger: commit
     dockerfilePath: ./apps/gateway/Dockerfile
     dockerContext: .
     healthCheckPath: /health
@@ -69,6 +73,7 @@ services:
     region: oregon
     plan: starter
     branch: main
+    autoDeployTrigger: commit
     dockerfilePath: ./apps/worker/Dockerfile
     dockerContext: .
     envVars:

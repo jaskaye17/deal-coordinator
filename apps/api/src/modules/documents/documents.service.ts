@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { PrismaService } from '../../prisma/prisma.service';
-import type { AuditService } from '../audit/audit.service';
-import type { FormRulesService } from '../form-rules/form-rules.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
+import { FormRulesService } from '../form-rules/form-rules.service';
 import type {
   FileStorageProvider} from '../file-storage/file-storage.interface';
 import {

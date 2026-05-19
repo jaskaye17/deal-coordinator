@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import type { CommunicationsService } from './communications.service';
+import { CommunicationsService } from './communications.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

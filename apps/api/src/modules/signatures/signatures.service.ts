@@ -1,6 +1,6 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import type { PrismaService } from '../../prisma/prisma.service';
-import type { AuditService } from '../audit/audit.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 import { AppError } from '@deal-coordinator/shared';
 import type { DealStage, DealType } from '@deal-coordinator/shared';
 import { validateTransition } from '@deal-coordinator/workflow';

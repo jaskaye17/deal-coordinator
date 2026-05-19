@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Logger } from '@nestjs/common';
-import type { SignaturesService } from './signatures.service';
-import type { PrismaService } from '../../prisma/prisma.service';
+import { SignaturesService } from './signatures.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Controller('webhooks')
 export class DocuSignWebhookController {

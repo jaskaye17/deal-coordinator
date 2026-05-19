@@ -1,5 +1,5 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import type { MessagingService } from './messaging.service';
+import { MessagingService } from './messaging.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

@@ -1,5 +1,5 @@
 import { Controller, Post, Get, Param, Body } from '@nestjs/common';
-import type { CalendarSyncService } from './calendar-sync.service';
+import { CalendarSyncService } from './calendar-sync.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

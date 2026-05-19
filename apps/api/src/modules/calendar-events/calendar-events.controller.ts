@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Param, Query, Body } from '@nestjs/common';
-import type { CalendarEventsService } from './calendar-events.service';
+import { CalendarEventsService } from './calendar-events.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

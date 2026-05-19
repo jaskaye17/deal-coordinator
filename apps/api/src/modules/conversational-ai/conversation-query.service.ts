@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import type { DealStage, DealType } from '@deal-coordinator/shared';
 import { workflowRegistry } from '@deal-coordinator/workflow';
 

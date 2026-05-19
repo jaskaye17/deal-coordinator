@@ -1,23 +1,46 @@
 name: Deploy Staging
 
-on:
-  push:
-    branches: [main]
-
-# Optional: add repository secrets (Render Dashboard → each service → Deploy → Deploy hook):
-#   RENDER_DEPLOY_HOOK_API, RENDER_DEPLOY_HOOK_GATEWAY, RENDER_DEPLOY_HOOK_WORKER
-# Web (Vercel): connect the repo in the Vercel dashboard; it deploys independently.
+# Runs after CI succeeds on a push to `main` (optional hooks + Vercel CLI deploy track green checks).
+# Render: with `autoDeployTrigger: commit` in render.yaml, pushes to `main` already trigger Render deploys;
+# use `checksPass` if you want Render to wait for CI. Optional Render deploy hooks for non–Git-linked setups.
 #
-# Note: `secrets` cannot be used in `if:` expressions; hooks are triggered via env + shell.
+# Vercel: add GitHub Environment `staging` secrets VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
+# (from Vercel → Project → Settings → General, or run `vercel link` once and read `.vercel/project.json`).
+# If unset, the Vercel step is skipped (use Vercel’s Git integration instead if you prefer).
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: staging
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.event == 'push')
+
+    permissions:
+      contents: read
+
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
-      - name: Trigger Render deploy hooks (if configured)
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Trigger Render deploy hooks (optional)
         env:
           HOOK_API: ${{ secrets.RENDER_DEPLOY_HOOK_API }}
           HOOK_GATEWAY: ${{ secrets.RENDER_DEPLOY_HOOK_GATEWAY }}
@@ -37,6 +60,21 @@ jobs:
             triggered=1
           fi
           if [ "$triggered" -eq 0 ]; then
-            echo "No RENDER_DEPLOY_HOOK_* secrets set — skipping curl deploys."
-            echo "Render can still auto-deploy from Git, or add hooks under repo → Settings → Secrets."
+            echo "No RENDER_DEPLOY_HOOK_* secrets set — skipping hook POSTs."
+            echo "Git-linked Render services auto-deploy from `main` per render.yaml (e.g. autoDeployTrigger: commit)."
           fi
+
+      - name: Deploy web to Vercel (optional)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "Skipping Vercel CLI deploy — set VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID on the staging environment."
+            echo "Alternatively connect the repo in the Vercel dashboard (root directory apps/web) for Git-based deploys."
+            exit 0
+          fi
+          # vercel.json lives in apps/web; project Root Directory in dashboard should also be apps/web
+          cd apps/web
+          npx --yes vercel@41.0.0 deploy --prod --token "$VERCEL_TOKEN"

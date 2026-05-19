@@ -4,7 +4,7 @@ import type {
 import {
   FILE_STORAGE_PROVIDER
 } from './file-storage.interface';
-import type { AuditService } from '../audit/audit.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class FileStorageService {

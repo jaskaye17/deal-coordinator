@@ -13,7 +13,7 @@ import {
   type FileStorageProvider,
 } from '../file-storage/file-storage.interface';
 import { Prisma } from '@deal-coordinator/db';
-import type { TemplateFieldDetectionService } from './template-field-detection.service';
+import { TemplateFieldDetectionService } from './template-field-detection.service';
 import { readBytesFromStorageKey } from '../../common/storage-read.util';
 
 function slugifyKey(s: string): string {

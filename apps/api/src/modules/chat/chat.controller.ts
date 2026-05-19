@@ -1,5 +1,5 @@
 import { Controller, Post, Body, UsePipes } from '@nestjs/common';
-import type { ChatService } from './chat.service';
+import { ChatService } from './chat.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 import { chatIngestSchema } from '@deal-coordinator/shared';

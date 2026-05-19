@@ -1,6 +1,6 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
-import type { PrismaService } from '../../prisma/prisma.service';
-import type { AuditService } from '../audit/audit.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 import type {
   FileStorageProvider} from '../file-storage/file-storage.interface';
 import {

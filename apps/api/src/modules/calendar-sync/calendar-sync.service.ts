@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import type { PrismaService } from '../../prisma/prisma.service';
-import type { AuditService } from '../audit/audit.service';
-import type { GoogleCalendarProvider } from './providers/google-calendar.provider';
-import type { MicrosoftCalendarProvider } from './providers/microsoft-calendar.provider';
+import { PrismaService } from '../../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
+import { GoogleCalendarProvider } from './providers/google-calendar.provider';
+import { MicrosoftCalendarProvider } from './providers/microsoft-calendar.provider';
 import type { CalendarProvider } from './calendar-provider.interface';
 
 @Injectable()

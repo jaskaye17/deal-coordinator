@@ -7,7 +7,7 @@ import {
   Query,
   Body,
 } from '@nestjs/common';
-import type { DealsService } from './deals.service';
+import { DealsService } from './deals.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 import {

@@ -1,5 +1,5 @@
 import { Controller, Post, Param, Body, UsePipes } from '@nestjs/common';
-import type { DealQueryService } from './deal-query.service';
+import { DealQueryService } from './deal-query.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 import { dealQuerySchema } from '@deal-coordinator/shared';

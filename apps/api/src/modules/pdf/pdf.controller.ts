@@ -1,5 +1,5 @@
 import { Controller, Post, Param, Body } from '@nestjs/common';
-import type { PDFService } from './pdf.service';
+import { PDFService } from './pdf.service';
 import { Tenant } from '../../common/decorators/tenant.decorator';
 import type { TenantContext } from '@deal-coordinator/shared';
 

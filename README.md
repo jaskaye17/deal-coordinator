@@ -154,8 +154,9 @@ See [docs/phase1.md](docs/phase1.md) for deliverables, deferred work, limitation
 ## CI/CD
 
 - **CI** (`.github/workflows/ci.yml`): on pushes and PRs to `main`, installs with pnpm, runs Prisma generate, lint, typecheck, test, and build against PostgreSQL 16.
-- **Staging backend** ([`render.yaml`](render.yaml)): Render **Blueprint** (Postgres + API + gateway + worker Docker services). See **Staging** in [docs/environments.md](docs/environments.md). **Staging** workflow (`.github/workflows/deploy-staging.yml`) optionally triggers Render **deploy hooks** when `RENDER_DEPLOY_HOOK_*` secrets are set; otherwise Render auto-deploys from Git.
-- **Web:** deploy `apps/web` on **Vercel** (separate from Render); set `NEXT_PUBLIC_API_URL` to the hosted API URL.
+- **Staging backend** ([`render.yaml`](render.yaml)): Render **Blueprint** (Postgres + API + gateway + worker on **`main`**). Services use **`autoDeployTrigger: commit`** so Render deploys on each push to `main` (set to **`checksPass`** in `render.yaml` if you want deploys only after GitHub CI succeeds). See [docs/environments.md](docs/environments.md) for deploy hooks and Vercel setup.
+- **Deploy Staging** (`.github/workflows/deploy-staging.yml`): runs after **CI** completes successfully on a **push to `main`** (and on manual `workflow_dispatch`). Optionally POSTs Render **deploy hooks** if `RENDER_DEPLOY_HOOK_*` secrets are set; optionally runs **`vercel deploy --prod`** if `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` are set on the **`staging`** GitHub environment (otherwise use Vercel’s Git integration for `apps/web`).
+- **Web:** deploy `apps/web` on **Vercel** with root directory `apps/web` and [`apps/web/vercel.json`](apps/web/vercel.json); set `NEXT_PUBLIC_API_URL` to the hosted API URL. First-time steps: [docs/vercel-first-setup.md](docs/vercel-first-setup.md) and [`scripts/vercel-link-web.sh`](scripts/vercel-link-web.sh).
 - **Production** (`.github/workflows/deploy-production.yml`): still a placeholder; mirror the Render blueprint in a second workspace or promote images when you are ready.
 
 Configure GitHub Environments (`staging`, `production`) with required reviewers and secrets as you harden production.
