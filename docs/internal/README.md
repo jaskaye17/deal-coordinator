@@ -2,10 +2,13 @@
 
 Material for **engineering, product, and operations**: how the system is designed, what we committed to build, and how we ship it.
 
+**Positioning:** read [Product vision](../vision.md) first—**text-first AI transaction coordinator for realtors**; brokerage/workspace scale is expansion, not the immediate pitch.
+
 ## Contents
 
 | Resource | Description |
 | --- | --- |
+| [Product vision](../vision.md) | Text-first AI TC for realtors; opaque AI/human; brokerage as expansion |
 | [Architecture](../architecture.md) | Runtime layout, tenancy, API patterns, workflows, chat/audit (Phase 1) |
 | [Phase 1 scope](../phase1.md) | Deliverables, deferred work, limitations, Phase 2 themes |
 | [ADR 006 — Web (Phase 1)](../adr/006-web-application-phase1.md) | Next.js app: workspace context, API client, shells, deal UX |

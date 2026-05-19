@@ -1,6 +1,6 @@
 # Documentation hub
 
-Documentation is split by **audience** so engineers, product, and support can find the right material—and so we can later reuse articles for in-app tours (e.g. Pendo) and **SMS-first** onboarding (the product vision: users experience a **transaction coordinator** over messaging, with the web UI optional).
+Documentation is split by **audience** so engineers, product, and support can find the right material—and so we can reuse articles for in-app tours (e.g. Pendo) and **SMS onboarding**. **Product positioning** is **text-first AI transaction coordinator for realtors**; see [`vision.md`](vision.md).
 
 | Track | Folder | Audience | Purpose |
 | --- | --- | --- | --- |
@@ -14,6 +14,7 @@ See the Cursor rule **“Documentation maintenance”** (`.cursor/rules/document
 
 ## Quick links
 
+- [**Product vision (text-first realtor TC)**](vision.md)
 - [What we built (Phase 1)](phase1.md)
 - [System architecture](architecture.md)
 - [All ADRs](adr/) (001–007 and beyond)

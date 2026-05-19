@@ -1,6 +1,6 @@
 # Your deals and pipeline
 
-A **deal** is one transaction your brokerage is working through—often a listing or a buyer side—with a **stage** that shows where it is in the process (for example listing active, under contract, or closed).
+As a **realtor**, **deals** are the transactions your **transaction coordinator** helps you track—listings, purchases, or similar—with a **stage** (for example listing active, under contract, closing). The **website** shows the same story you might also handle **over text**.
 
 ## Deals list
 

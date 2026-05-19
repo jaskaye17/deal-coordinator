@@ -1,6 +1,8 @@
 # Deal Coordinator
 
-Multi-tenant AI transaction coordinator for real estate brokerages. Teams capture deal context from chat and structured workflows, route exceptions, and keep an auditable history of what changed and why—without giving up workspace isolation.
+**AI transaction coordinator for realtors—text first.** The product is built so a realtor can work with a **transaction coordinator over SMS/messaging** the same way many do with a human TC today: **opaque** whether the other side is AI or a person, with **proactive** follow-ups, reminders, and deal-level communication. The **web app** is supporting (full deal picture, docs, settings), not the primary interaction model.
+
+The codebase is **multi-tenant** (workspaces) so **brokerages and teams** can be served later; that is a **growth trajectory**, not the immediate target user story. See [`docs/vision.md`](docs/vision.md).
 
 ## Tech stack
 
@@ -19,7 +21,7 @@ Multi-tenant AI transaction coordinator for real estate brokerages. Teams captur
 ```
 deal-coordinator/
 ├── apps/
-│   ├── web/        # Next.js brokerage UI
+│   ├── web/        # Next.js UI (secondary to text-first coordinator experience)
 │   ├── api/        # NestJS REST API
 │   ├── worker/     # Background jobs (Phase 1: placeholder loop)
 │   └── gateway/    # Chat webhook ingress → API

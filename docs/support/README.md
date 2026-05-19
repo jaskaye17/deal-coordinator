@@ -1,6 +1,8 @@
 # Support & onboarding (customer-facing)
 
-Articles here are written for **people using Deal Coordinator**, not engineers. Tone: clear, short sentences; avoid internal codenames unless necessary. Prefer the **transaction coordinator** metaphor: the product helps a brokerage stay on top of deals—often via conversation—without requiring everyone to live in a dashboard.
+Articles here are written for **people using Deal Coordinator**, not engineers. **Primary user:** the **realtor** working **text-first** with an **AI or human-opaque** transaction coordinator; the web app is **supporting**. See [Product vision](../vision.md).
+
+Tone: clear, short sentences; avoid internal codenames unless necessary. Prefer the **“texting your TC”** metaphor over **brokerage dashboard** language unless the reader is clearly a broker/admin.
 
 These pages are candidates for:
 

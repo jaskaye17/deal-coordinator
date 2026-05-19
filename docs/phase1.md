@@ -1,10 +1,12 @@
 # Phase 1
 
-This document summarizes what Phase 1 of Deal Coordinator is meant to deliver, what exists in the repository today, what was explicitly deferred, known limitations, and a high-level Phase 2 roadmap.
+**Product intent:** build toward an **AI transaction coordinator for realtors** that is **text first**—proactive, deal-aware messaging where the user does **not** need to know if the coordinator is AI or human (see [`vision.md`](vision.md)). Phase 1 is a **vertical slice** of data, workflows, ingest, and a **supporting web UI**; broker-grade **workspace** features exist as infrastructure for a later **brokerage** trajectory, not the primary pitch.
+
+This document summarizes what Phase 1 is meant to deliver, what exists in the repository today, what was explicitly deferred, known limitations, and a high-level Phase 2 roadmap.
 
 ## Scope and deliverables
 
-Phase 1 targets a **coherent vertical slice** for a multi-tenant real estate brokerage:
+Phase 1 targets a **coherent vertical slice** (multi-tenant **workspace** model included for future scale):
 
 1. **Workspace model** — Workspaces, memberships, roles, and workspace-scoped settings (confidence thresholds, review gate policy, audit retention metadata).
 2. **Deal operations** — Create and list deals, maintain deal fields with provenance and confidence, transition stages via an in-code workflow engine with role guards.

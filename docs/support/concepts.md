@@ -1,33 +1,34 @@
 # Key concepts
 
-Short definitions for how Deal Coordinator thinks about your work. Wording here is meant to match **in-product copy** and future **SMS onboarding**.
+Wording here should match **in-product copy** and **SMS onboarding**. The **canonical product story** is in [Product vision](../vision.md): **text-first AI transaction coordinator for realtors**; **brokerage** scale is a later trajectory.
+
+## Transaction coordinator (core idea)
+
+Deal Coordinator is meant to feel like the **transaction coordinator (TC)** you already text today—someone who **tracks your deals**, **nags you kindly** about what’s missing, **follows up** with you and others as needed, and **keeps dates and next steps** straight.
+
+- **Text first** — The main relationship is **messaging** (SMS or chat), not the website.  
+- **Opaque** — You should **not** have to know (or care) if you’re talking to **software or a human** on the other end. The experience should be one **trusted coordinator**.  
+- **Proactive** — The coordinator **reaches out**: reminders, status checks, gaps in the file—not only when you open an app.  
+- **Full TC over time** — The product should **grow into** handling **everything** a human TC would do for your pipeline (Phase 1 is a slice, not the full set yet).
+
+## Web app
+
+The **website** is there when you want the **full picture** in one place (deal records, documents, settings). It is **supporting**, not the primary way you’re meant to work day to day.
 
 ## Workspace
 
-A **workspace** is your brokerage’s (or team’s) **private area** in Deal Coordinator. Deals, people, and history belong to a workspace so data stays **separate** from other companies.
-
-You might hear “your workspace” when signing in or switching context.
+A **workspace** is the **account boundary** in the product (your data stays separate from other companies). For a **solo realtor**, it may feel like “your account.” For a **brokerage rollout** later, it’s the team container. Technically it’s still a workspace whether you’re one agent or many.
 
 ## Deal
 
-A **deal** is one transaction you’re managing—typically a listing or purchase—with a **stage** in the process (for example listing active, under contract, closing). Moving stages follows rules your brokerage sets so the right people approve or review steps at the right time.
-
-## Transaction coordinator (mental model)
-
-Deal Coordinator is designed so day-to-day work can feel like talking to a **coordinator** who:
-
-- **Remembers** what was said in chat about a deal  
-- **Surfaces** what’s missing or unclear  
-- **Keeps an audit trail** of important changes  
-
-The **web app** shows the same story in structured screens. **Messaging** (when your team turns it on) can carry questions, reminders, and quick updates without opening the app.
+A **deal** is **one transaction** you’re working—listing, purchase, or similar—with a **stage** in the process. The coordinator’s job is to help **that deal** stay on the rails: dates, tasks, communications, missing pieces.
 
 ## Exceptions and review
 
-Some steps may require **attention** before the deal moves on—missing information, policy checks, or **review** by a broker or reviewer. Those items appear in the product so nothing slips through silently.
+Some steps need **extra attention** before things move on—missing items, policy checks, or **broker / reviewer** sign-off. Those show up so nothing slips through; over messaging, the coordinator can **surface** them the same way a human TC would ping you.
 
 ## Chat and messages
 
-Messages about a deal can be **ingested** into Deal Coordinator so key facts and tasks stay tied to the **right deal** and **workspace**. Exactly how chat connects (which tools, which phone numbers) depends on your organization’s setup.
+Messages are **ingested** so they attach to the **right deal** and **workspace**—not lost in a thread. **How** your number connects (carrier, vendor) depends on setup.
 
-For **templates, integrations, and offers**, see [this overview](templates-and-integrations.md). For how **chat and messaging** connect to deals, see [Messages and chat](messages-and-chat.md).
+For **templates, integrations, and offers**, see [this overview](templates-and-integrations.md). For **technical** message flow, see [Messages and chat](messages-and-chat.md).

@@ -1,37 +1,36 @@
 # Getting started with Deal Coordinator
 
-Deal Coordinator helps real estate teams **track each transaction**, capture what changed (including from **chat**), and resolve issues **with a clear history**—so everyone knows what happened and what to do next. Many users will eventually work mainly with a **transaction coordinator** over messaging; the **website** is there when you want the full picture in one place.
+Deal Coordinator is an **AI transaction coordinator for realtors**, **text first**: you interact mainly by **messaging**—the way you might already text a **human TC**. It should feel **opaque** whether you’re talking to **AI or a person**. The coordinator **follows up**, **reminds** you, and **communicates** what matters across your **deals** (see [Key concepts](concepts.md) and [Product vision](../vision.md)).
 
-## Who it’s for
+The **website** is **secondary**: use it when you want the full deal picture, documents, or settings in one place.
 
-- **Agents** working active deals  
-- **Brokers and admins** overseeing the team  
-- **Reviewers** checking critical steps before things move forward  
+## Who it’s for (today)
 
-Your organization is set up as a **workspace** (see [Key concepts](concepts.md)).
+- **Realtors** running active deals who want a **coordinator over text** (primary).  
+- **Brokers, teams, reviewers** where your deployment includes shared workflows—**brokerage** features are a **growth** path, not the core first story.
 
-## Signing in
+Your account is backed by a **workspace** in the product (see [Key concepts](concepts.md)).
 
-1. Open your team’s Deal Coordinator web address (your broker or IT will provide it).  
+## Signing in (web)
+
+1. Open your Deal Coordinator web address (your administrator or vendor provides it).  
 2. Enter your **email** and **password**.  
-3. If you belong to more than one workspace, you may be asked to **choose which one** you’re working in.
+3. If you have access to more than one workspace, you may **pick which one** you’re using.
 
-### Demo / training accounts
+### Demo / training
 
-In training environments, your team may offer **demo accounts** (for example with password `demo`). Use only email addresses your administrator has set up for that environment.
+In demos, you may use **training accounts** (e.g. password `demo`). Use only addresses set up for that environment.
 
 ## What to do first
 
-- Open **Deals** to see your pipeline — see [Deals and pipeline](deals-and-pipeline.md).  
-- Open a **deal** to review details, documents, and anything that needs attention.  
-- Check the **Dashboard** for a high-level snapshot — [Dashboard, files, and review queue](dashboard-files-review.md).  
-- Explore **[Settings](settings-and-workspace.md)** for your profile and workspace options.  
+- **Primary path (when SMS is on):** text your coordinator number the same way you would a human TC.  
+- **Web:** open **Deals** — [Deals and pipeline](deals-and-pipeline.md). Open a **deal** for detail tabs. **Dashboard** snapshot — [Dashboard, files, and review queue](dashboard-files-review.md). **Settings** — [Settings and workspace](settings-and-workspace.md).
 
 ## Getting help
 
-- Contact your **brokerage administrator** for access, password resets, or your workspace URL.  
-- If something looks wrong in the data, note **when** it happened and **which deal**—that helps support trace the issue.
+- For access or password issues, contact whoever **provisioned** your account.  
+- For wrong or missing deal data, note **when** and **which deal** so support can trace it.
 
 ---
 
-*This article describes the intended experience. Your brokerage may configure features differently.*
+*Your environment may not have SMS enabled yet; until then, **Debug / phone simulator** or webhooks may stand in for the text channel.*

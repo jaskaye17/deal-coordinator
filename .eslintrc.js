@@ -16,5 +16,15 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/consistent-type-imports': 'error',
   },
+  overrides: [
+    {
+      files: ['apps/api/**/*.ts'],
+      rules: {
+        // Nest constructor DI uses emitDecoratorMetadata; `import type` for injectable
+        // classes strips runtime references and breaks provider resolution.
+        '@typescript-eslint/consistent-type-imports': 'off',
+      },
+    },
+  ],
   ignorePatterns: ['dist', 'node_modules', '.next', '.turbo', '*.js', '!.eslintrc.js'],
 };
