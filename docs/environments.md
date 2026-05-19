@@ -87,13 +87,13 @@ Mirror production **shape** but use **non-production** credentials:
 | `STORAGE_DRIVER` | `s3` for shared staging buckets, or `local` for single-node experiments. |
 | `AI_PROVIDER` | `fake` for deterministic QA, or `openai` with a **scoped** API key. |
 
-Run migrations as a deploy step:
+Run migrations as a deploy step (see [cicd.md](cicd.md) for the full `main` / Render / Vercel order):
 
 ```bash
 pnpm --filter @deal-coordinator/db exec prisma migrate deploy
 ```
 
-(Execute in CI/CD or release container with `DATABASE_URL` injected.)
+**Automated on `main`:** set GitHub repository secret **`STAGING_DATABASE_URL`** to the same Postgres URL Render uses; [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs `migrate deploy` on each push to `main` after tests (when the secret is set).
 
 ### Database
 

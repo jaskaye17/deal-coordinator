@@ -55,5 +55,19 @@ jobs:
       - name: Run Tests
         run: pnpm test
 
+      # Applies migrations to the real Render staging DB before the job reports success.
+      # Pair with render.yaml autoDeployTrigger: checksPass so new containers roll out only after CI (incl. migrate) passes.
+      # Add repo secret STAGING_DATABASE_URL (Postgres external URL from Render; same DB the API uses).
+      - name: Prisma migrate deploy (staging, main push only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::notice::Skipping migrate — set repository secret STAGING_DATABASE_URL to auto-apply migrations on each main push."
+            exit 0
+          fi
+          pnpm --filter @deal-coordinator/db migrate:deploy
+
       - name: Build
         run: pnpm build
