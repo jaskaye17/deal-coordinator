@@ -1,18 +1,38 @@
 export const STORAGE_WORKSPACE = 'workspace-id';
 export const STORAGE_USER = 'user-id';
 
-function getBaseUrl(): string {
-  const raw = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
-  return raw.replace(/\/$/, '');
+function getApiOrigin(): string {
+  const raw = (process.env.NEXT_PUBLIC_API_URL ?? '').trim();
+  if (!raw) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        'NEXT_PUBLIC_API_URL is not set. In Vercel: Project → Settings → Environment Variables. Use your public API origin (e.g. https://deal-coordinator-api.onrender.com). Redeploy after changing it.',
+      );
+    }
+    return 'http://localhost:3001';
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    throw new Error(
+      'NEXT_PUBLIC_API_URL must be a full URL with a protocol (e.g. https://your-api.onrender.com).',
+    );
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    throw new Error('NEXT_PUBLIC_API_URL must use http:// or https://');
+  }
+  return parsed.origin;
 }
 
 function buildUrl(
   path: string,
   params?: Record<string, string | number | boolean | undefined>,
 ): string {
-  const base = getBaseUrl();
+  const origin = getApiOrigin();
   const normalized = path.startsWith('/') ? path : `/${path}`;
-  const url = new URL(`${base}/api${normalized}`);
+  const url = new URL(`${origin}/api${normalized}`);
   if (params) {
     for (const [key, value] of Object.entries(params)) {
       if (value === undefined) continue;

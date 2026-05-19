@@ -2,7 +2,7 @@
 
 import { Button, Card, Input } from '@deal-coordinator/ui';
 import { useRouter } from 'next/navigation';
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useWorkspace } from '@/lib/context/workspace-context';
 import { api } from '@/lib/api';
 
@@ -29,6 +29,15 @@ export default function LoginPage() {
 
   const [loggedInUser, setLoggedInUser] = useState<{ id: string; name: string } | null>(null);
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+
+  // Set NEXT_PUBLIC_DEBUG_API=1 on Vercel and redeploy to print build-inlined API env in the browser console (then remove the var).
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_DEBUG_API === '1') {
+      console.info('[deal-coordinator] build-time client env', {
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+      });
+    }
+  }, []);
 
   function enterWorkspace(ws: Workspace, userId: string, isNew: boolean) {
     setWorkspace(ws.id, userId);
